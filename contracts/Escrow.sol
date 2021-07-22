@@ -1,60 +1,73 @@
 pragma solidity ^0.5.0;
 
 contract Escrow {
-    enum State { AWAITING_LOTTERY, COMPLETE }
-    enum LotteryState { OPEN, DRAW, DRAWN, COMPLETE }
-    struct Cheque {
-        address payable _from;
-        uint amount;
-        State currentState;
-    }
-    LotteryState public lst;
-    address payable public organization;
+    enum State {OPEN, CLOSED, DONE}
+
+    State public currentState;
+
+    mapping(uint=>address payable) public buyer;
+    uint buyer_count;
     address payable public winner;
-    mapping(uint=>Cheque) public cheques;
-    uint public cheque_count;
-    modifier onlyOrg() {
-        require(msg.sender == organization,"Only organization can call this method");
+    address payable public arbiter;
+
+    modifier buyerOnly(){
+        bool condition = false;
+        for(uint x=1;x<=buyer_count;x++){
+            if(msg.sender == buyer[x]){
+                condition = true;
+            }
+        }
+        require(condition || msg.sender == arbiter,"Not permissioned to make function call");
         _;
     }
 
-    constructor(address payable _organization) public {
-        cheque_count = 0;
-        organization = _organization;
+    modifier winnerOnly(){
+        require(msg.sender == arbiter || msg.sender == winner,"Not permissioned to make function call");
+        _;
     }
 
-    function escrowBalance() public view returns (uint) {
-        return address(this).balance;
+    modifier arbiterOnly() {
+        require(msg.sender == arbiter,"Exclusive access required");
+        _;
     }
 
-    function addParticipant(address payable participant_id, uint amount) external payable returns (bool success) {
-        require(lst == LotteryState.OPEN,"Participation for this round is closed");
-        cheque_count++;
-        cheques[cheque_count] = Cheque(participant_id, amount, State.AWAITING_LOTTERY);
-        return true;
-    }
-    function allocateWinner(address payable winner_id) private {
-        require(lst == LotteryState.DRAW,"Lottery is not in draw state");
-        winner = winner_id;
-        lst = LotteryState.DRAWN;
+    modifier inState(State expectedState){
+        require(currentState == expectedState);
+        _;
     }
 
-    function pay_winner() external payable onlyOrg {
-        require(lst == LotteryState.DRAWN,"Lottery is not in correct state");
-        require(address(this).balance > 2,"Payment is already made");
-        
-        // winner ID is algorithmically calculated here 
-        allocateWinner(msg.sender);     // change msg.sender to something else here
-        // pay the lottery fees to organization ( optional to be removed in case of decentralized automated auction)
-        organization.transfer(2);
-        // pay the winner it's reward
+    constructor(address payable _arbiter) public{
+        winner = _arbiter;
+        arbiter = _arbiter;
+    }
+
+    function participate(address payable buy_ad) public inState(State.OPEN){
+        buyer_count++;
+        buyer[buyer_count] = buy_ad;
+    }
+
+    function decideWinner() private inState(State.CLOSED){
+        // logic to decide winner here 
+        winner = arbiter;
+    }
+
+    function draw() public payable arbiterOnly inState(State.CLOSED){
+        // decide the winner 
+
+        // check if the balance has more than 2 coins
+        arbiter.transfer(2);
         winner.transfer(address(this).balance);
-        for(uint x=1;x<=cheque_count;x++) {
-            if(cheques[x].currentState == State.AWAITING_LOTTERY) {
-                cheques[x].currentState = State.COMPLETE;
-            }
-        }
-        lst = LotteryState.COMPLETE;
+        currentState = State.DONE;
+    }
+
+    function reset() public arbiterOnly inState(State.DONE){
+        // make the current state as the done state
+        buyer_count = 0;
+        
+    }
+
+    function currentStakes() public view returns(uint){
+        return address(this).balance;
     }
 
 }

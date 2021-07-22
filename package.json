@@ -1,7 +1,7 @@
 {
-    "name": "eth-lottery",
+    "name": "eth-todo-list",
     "version": "1.0.0",
-    "description": "Blockchain Lottery System",
+    "description": "Blockchain ToDo list",
     "main": "truffle-config.js",
     "dependencies": {
         "truffle": "5.0.2",

@@ -1,3 +1,6 @@
-# BIBENDUM
+# BIBENDUM 
 
-Decentralized Lottery System written using solidity for the ETH odyssey
+A Ethereum based smart contract for a fair and decentralized Lottery.
+
+---
+
