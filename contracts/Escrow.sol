@@ -1,73 +1,52 @@
 pragma solidity ^0.5.0;
 
 contract Escrow {
-    enum State {OPEN, CLOSED, DONE}
 
-    State public currentState;
+    struct Transaction {
+        uint value;
+        address payable from;
+    }
 
-    mapping(uint=>address payable) public buyer;
-    uint buyer_count;
-    address payable public winner;
-    address payable public arbiter;
-
-    modifier buyerOnly(){
-        bool condition = false;
-        for(uint x=1;x<=buyer_count;x++){
-            if(msg.sender == buyer[x]){
-                condition = true;
-            }
-        }
-        require(condition || msg.sender == arbiter,"Not permissioned to make function call");
+    address payable public billingAddress;
+    uint public ticket_amount;
+    uint public ticket_price;
+    mapping(uint=>Transaction) public participants;
+    modifier onlyOwner(){
+        require(msg.sender == billingAddress);
         _;
-    }
+    }    
 
-    modifier winnerOnly(){
-        require(msg.sender == arbiter || msg.sender == winner,"Not permissioned to make function call");
-        _;
-    }
+  constructor(address payable _billingAddress)public{
+      billingAddress = _billingAddress;
+      ticket_amount = 0;
+      ticket_price = 2;
+  }
 
-    modifier arbiterOnly() {
-        require(msg.sender == arbiter,"Exclusive access required");
-        _;
-    }
+  function getData(uint externalPaymentId) public view returns (address){
+			require(externalPaymentId > 0 && externalPaymentId <= ticket_amount);
+			return participants[externalPaymentId].from;
+	}
 
-    modifier inState(State expectedState){
-        require(currentState == expectedState);
-        _;
-    }
+  function getPrice()public view returns(uint){
+      return address(this).balance;
+	}
 
-    constructor(address payable _arbiter) public{
-        winner = _arbiter;
-        arbiter = _arbiter;
-    }
+  // function startNewPayment(uint externalPaymentId, uint price) public onlyOwner{
+		
+  // }
 
-    function participate(address payable buy_ad) public inState(State.OPEN){
-        buyer_count++;
-        buyer[buyer_count] = buy_ad;
-    }
+  function pay()public payable{
+      require(msg.value == ticket_price, "Amount is incorrect for buying 1 ticket");
+      ticket_amount++;
+      participants[ticket_amount].value = msg.value;
+      participants[ticket_amount].from  = msg.sender;
+  }
 
-    function decideWinner() private inState(State.CLOSED){
-        // logic to decide winner here 
-        winner = arbiter;
-    }
+  // function complete(uint externalPaymentId)public onlyOwner{
+  //     // called when payment is complete
+  // }
 
-    function draw() public payable arbiterOnly inState(State.CLOSED){
-        // decide the winner 
-
-        // check if the balance has more than 2 coins
-        arbiter.transfer(2);
-        winner.transfer(address(this).balance);
-        currentState = State.DONE;
-    }
-
-    function reset() public arbiterOnly inState(State.DONE){
-        // make the current state as the done state
-        buyer_count = 0;
-        
-    }
-
-    function currentStakes() public view returns(uint){
-        return address(this).balance;
-    }
-
+  // function refund(uint externalPaymentId) public onlyOwner{
+  //     // idk about this fs
+  // }
 }
