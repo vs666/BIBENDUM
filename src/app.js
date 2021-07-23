@@ -50,12 +50,12 @@ App = {
         web3.eth.defaultAcoount = web3.eth.accounts[0]
     },
     loadContract: async() => {
-        const todoList = await $.getJSON('TodoList.json') // extracts out the smart contract json file
+        const escrow = await $.getJSON('Escrow.json') // extracts out the smart contract json file
             // create a truffle contract
-        App.contracts.TodoList = TruffleContract(todoList)
-        App.contracts.TodoList.setProvider(App.web3Provider) // gives copy of the contract in js
-        console.log(todoList)
-        App.todoList = await App.contracts.TodoList.deployed() // deploys the contract  
+        App.contracts.Escrow = TruffleContract(escrow)
+        App.contracts.Escrow.setProvider(App.web3Provider) // gives copy of the contract in js
+        console.log(escrow)
+        App.escrow_contract = await App.contracts.Escrow.deployed() // deploys the contract  
     },
     render: async() => {
         // this loading stuff is like mutexes 
@@ -65,7 +65,7 @@ App = {
         }
         App.setLoading(true)
         $('#account').html(App.account);
-        await App.renderTasks()
+        await App.renderData()
         App.setLoading(false)
 
 
@@ -82,65 +82,33 @@ App = {
             content.show()
         }
     },
-    renderTasks: async() => {
+    renderData: async() => {
         // First load the task from the blockchain
-        const taskCount = await App.todoList.taskCount()
-        const $taskTemplate = $('.taskTemplate')
-        for (var i = 1; i <= taskCount; i++) {
-            const task = await App.todoList.tasks(i)
-            console.log('Task is ', task)
-            const ID = task[0].toNumber()
-            const CONTENT = task[1]
-            const COMPLETED = task[2]
-
-            // create html
-            const $newTaskTemplate = $taskTemplate.clone()
-            $newTaskTemplate.find('.content').html(CONTENT)
-            $newTaskTemplate.find('input')
-                .prop('name', ID)
-                .prop('id', "checkbox" + ID)
-                .prop('checked', COMPLETED)
-                .on('change', App.toggleTask)
-            if (COMPLETED) {
-                $('#completedTaskList').append($newTaskTemplate)
-            } else {
-                $('#taskList').append($newTaskTemplate)
-            }
-            $newTaskTemplate.show()
+        console.log('Entered renderData')
+        const current_bid = (await App.escrow_contract.getPrice()).toNumber();
+        const tam = (await App.escrow_contract.ticket_amount()).toNumber();
+        console.log('Cost is : ', current_bid)
+        for (let x = 1; x <= tam; x++) {
+            console.log('Amounty pounty', (await App.escrow_contract.getData(x)));
         }
-        console.log('All tasks displayed', taskCount.toNumber())
+        console.log('Donezo');
     },
-    addTask: async(task_name) => {
-        console.log('FUNCTION IS CALLED', task_name, web3.eth.accounts[0], App.todoList)
-            // App.setLoading(true)
-        await App.todoList.createTask(task_name, {
-            from: web3.eth.accounts[0]
-        }); // MAKE SOME CHANGE HERE
-        // App.setLoading(false)
-        console.log('Task added', task_name)
-    },
-    toggleTask: async(e) => {
-        const $checkbox = $(e.target)
-        const ID = $checkbox.prop('name')
-        const COMPLETED = $checkbox.prop('checked')
-        console.log('ID is ', ID, 'COMPLETED is ', COMPLETED)
-        await App.todoList.toggleTask(ID, {
-            from: web3.eth.accounts[0]
+    addBid: async() => {
+        App.escrow_contract.pay({
+            from: web3.eth.accounts[0],
+            value: 2
         });
-        window.location.reload()
-    }
+    },
+
 }
 
 
 $("form").on('submit', async function(event) {
     // ajax call here
     event.preventDefault();
-    console.log('AJAX CALL MADE')
-    const task_name = event.target.taskname.value
-    console.log('Adding task :: ', task_name)
-    await App.addTask(task_name.toString());
-    console.log('Task added', task_name)
-    window.location.reload();
+    console.log('Adding bid');
+    App.addBid()
+        // window.location.reload();
 });
 
 function clickedBox() {
