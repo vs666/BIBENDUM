@@ -88,8 +88,16 @@ App = {
         const current_bid = (await App.escrow_contract.getPrice()).toNumber();
         const tam = (await App.escrow_contract.ticket_amount()).toNumber();
         console.log('Cost is : ', current_bid)
+        $("#cost").html(current_bid)
+        const $participantTemplate = $('.participantTemplate');
         for (let x = 1; x <= tam; x++) {
-            console.log('Amounty pounty', (await App.escrow_contract.getData(x)));
+            const name = (await App.escrow_contract.getData(x)).toString();
+            const $newParticipant = $participantTemplate.clone();
+            $newParticipant.find('.content').html(name);
+            // make something here
+            $('#participantList').append($newParticipant);
+            console.log('Name of participant is : ', name);
+            $newParticipant.show()
         }
         console.log('Donezo');
     },

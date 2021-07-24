@@ -7,9 +7,12 @@ contract Escrow {
         address payable from;
     }
 
+    enum State {OPEN,CLOSED,COMPLETED}
     address payable public billingAddress;
     uint public ticket_amount;
     uint public ticket_price;
+    address payable public winner;
+    State public currentState;
     mapping(uint=>Transaction) public participants;
     modifier onlyOwner(){
         require(msg.sender == billingAddress);
@@ -20,6 +23,7 @@ contract Escrow {
       billingAddress = _billingAddress;
       ticket_amount = 0;
       ticket_price = 2000000000000000000;
+      currentState = State.OPEN;
   }
 
   function getData(uint externalPaymentId) public view returns (address){
@@ -36,6 +40,7 @@ contract Escrow {
   // }
 
   function pay()public payable returns (address){
+      require(currentState == State.OPEN,'Lottery round closed for entry');
       require(msg.value == ticket_price, "Amount is incorrect for buying 1 ticket");
       ticket_amount++;
       participants[ticket_amount].value = msg.value;
@@ -43,11 +48,32 @@ contract Escrow {
       return participants[ticket_amount].from;
   }
 
-  // function complete(uint externalPaymentId)public onlyOwner{
-  //     // called when payment is complete
-  // }
+    function decideWinner() private {
+        require(currentState == State.CLOSED,'Lottery round not yet closed');
+        // call function to close the lottery
+        // random_generator type of thing
+        winner = msg.sender;    // this is horseshit
+    }
 
-  // function refund(uint externalPaymentId) public onlyOwner{
-  //     // idk about this fs
-  // }
+    function transferFunds() public payable {
+        require(currentState == State.CLOSED,'Lottery round not yet closed');
+        winner.transfer(address(this).balance);
+        currentState = State.COMPLETED;
+    }
+
+    function callWinner() public{
+        decideWinner();
+        transferFunds();
+
+    }
+
+
+    
+//   function complete(uint externalPaymentId)public onlyOwner{
+//       // called when payment is complete
+//   }
+
+//   function refund(uint externalPaymentId) public onlyOwner{
+//       // idk about this fs
+//   }
 }
