@@ -96,7 +96,7 @@ App = {
     addBid: async() => {
         App.escrow_contract.pay({
             from: web3.eth.accounts[0],
-            value: 2
+            value: web3.toWei(2, 'ether'),
         });
     },
 

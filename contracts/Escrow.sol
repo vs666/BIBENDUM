@@ -19,7 +19,7 @@ contract Escrow {
   constructor(address payable _billingAddress)public{
       billingAddress = _billingAddress;
       ticket_amount = 0;
-      ticket_price = 2;
+      ticket_price = 2000000000000000000;
   }
 
   function getData(uint externalPaymentId) public view returns (address){
@@ -35,11 +35,12 @@ contract Escrow {
 		
   // }
 
-  function pay()public payable{
+  function pay()public payable returns (address){
       require(msg.value == ticket_price, "Amount is incorrect for buying 1 ticket");
       ticket_amount++;
       participants[ticket_amount].value = msg.value;
       participants[ticket_amount].from  = msg.sender;
+      return participants[ticket_amount].from;
   }
 
   // function complete(uint externalPaymentId)public onlyOwner{
