@@ -56,24 +56,14 @@ contract Escrow {
     }
 
     function transferFunds() public payable {
-        require(currentState == State.CLOSED,'Lottery round not yet closed');
+        // require(currentState == State.CLOSED,'Lottery round not yet closed');
+        winner = msg.sender;
         winner.transfer(address(this).balance);
         currentState = State.COMPLETED;
     }
 
     function callWinner() public{
-        decideWinner();
-        transferFunds();
-
+        winner = msg.sender;
     }
 
-
-    
-//   function complete(uint externalPaymentId)public onlyOwner{
-//       // called when payment is complete
-//   }
-
-//   function refund(uint externalPaymentId) public onlyOwner{
-//       // idk about this fs
-//   }
 }
