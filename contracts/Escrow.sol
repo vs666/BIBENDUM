@@ -63,11 +63,24 @@ contract Escrow {
     function reset() private {
         require(currentState == State.COMPLETED,'Lottery round not yet closed');
         // call function to close the lottery
+        currentState = State.OPEN;
         ticket_amount = 0;
     }
 
+    function getStatus() public view returns (string memory){
+        if(currentState == State.OPEN){
+            return "Open";
+        }
+        if(currentState == State.CLOSED){
+            return "Closed";
+        }
+        if(currentState == State.COMPLETED){
+            return "Completed";
+        }
+    }
+
     function transferFunds() public payable {
-        // require(currentState == State.CLOSED,'Lottery round not yet closed');
+        require(currentState == State.CLOSED,'Lottery round not yet closed');
         winner = msg.sender;
         winner.transfer(address(this).balance);
         currentState = State.COMPLETED;
