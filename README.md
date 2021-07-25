@@ -116,6 +116,9 @@ truffle migrate --reset
 ```
 Now, we need to deploy the frontend ( we use [lite-server](https://www.npmjs.com/package/lite-server))
 
+```shell
+npm run dev
+```
 
 ## Future Work 
 
