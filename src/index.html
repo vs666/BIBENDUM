@@ -9,7 +9,11 @@
     <title>Dapp University | Todo List</title>
 
     <!-- Bootstrap -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
     <link href="vendor/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
 
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -21,6 +25,10 @@
     <style>
         main {
             margin-top: 60px;
+        }
+        
+        img {
+            border-radius: 50%;
         }
         
         #content {
@@ -36,6 +44,40 @@
             margin-bottom: 0px;
         }
         
+        .plist {
+            background-color: #f5f5f5;
+            padding: 10vh;
+            height: 60vh
+        }
+        
+        ul.scrollmenu {
+            background-color: blanchedalmond;
+            height: 100%;
+            font-size: 2vh;
+            overflow: auto;
+            width: 60vh;
+            white-space: nowrap;
+        }
+        
+        .bordered {
+            border: 1px solid black;
+        }
+        
+        li:hover {
+            background-color: #d5d5d5;
+        }
+        
+        .colsty {
+            position: relative;
+            height: auto !important;
+            min-height: 100%;
+        }
+        
+        .footer {
+            position: absolute;
+            bottom: 0;
+        }
+        
         #completedTaskList .content {
             color: grey;
             text-decoration: line-through;
@@ -44,17 +86,54 @@
 </head>
 
 <body>
-    <nav class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow">
-        <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="http://www.dappuniversity.com/free-download" target="_blank">Dapp University | Todo List</a>
-        <ul class="navbar-nav px-3">
-            <li class="nav-item text-nowrap d-none d-sm-none d-sm-block">
-                <small><a class="nav-link" href="#"><span id="account"></span></a></small>
-            </li>
-        </ul>
-    </nav>
-    <form method="POST">
-        <input type="submit" value="Buy Ticket" style="margin-top:10px" />
-    </form>
+    <div>
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+            <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="http://www.google.com" target="_blank">BIBENDUM | Lottery</a>
+            <ul class="navbar-nav px-3">
+                <li class="nav-item text-nowrap d-none d-sm-none d-sm-block">
+                </li>
+            </ul>
+        </nav>
+
+    </div>
+    <div class="row">
+        <div class="col-2 bordered colsty" style="background-image: url(./images/bgc1.jpeg)">
+            <img src="data:image/png;base64,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"
+                width="100%" height="auto" style="padding-top: 2vh; margin-left: 2vh;" />
+            <small><a class="nav-link" style="margin-left: 2vh" ><span id="account"></span></a></small>
+            <small><a class="nav-link" style="margin-left: 2vh" ><span id="balance"></span></a></small>
+        </div>
+        <div class="col-8 bordered">
+            <div id="content" class="plist" style="background-image: url(./images/bgc2.jpeg);background-repeat:no-repeat; background-size:cover; overflow: hidden;">
+                <p class="text-center" style="color: chocolate; font-weight: 900;">Participants</p>
+                <ul id="participantList" class="scrollmenu">
+                    <li class="participantTemplate" class="checkbox" style="display: none">
+                        <label>
+                            <p class="content">Task content goes here...</p>
+                        </label>
+                    </li>
+                </ul>
+                <ul id="completedTaskList" class="list-unstyled">
+                </ul>
+            </div>
+        </div>
+        <div class="col-2 bordered">
+            <div style="margin-top: 2vh; align-items: center;">
+                <form method="POST" id="add">
+                    <button type="submit" id="add" class="btn btn-outline-success btn-md">BUY TICKET</button>
+                </form>
+                <form method="POST" id="roll">
+                    <button type="submit" id="roll" class="btn btn-outline-warning btn-sm">ROLL THE WHEEL</button>
+                </form>
+
+            </div>
+        </div>
+    </div>
+    <div class="row footer">
+        <div class="col bordered footer">
+            <p class="text-center">Hello World</p>
+        </div>
+    </div>
     <div class="container-fluid">
         <div class="row">
             <main role="main" class="col-lg-12 d-flex justify-content-center">
@@ -62,17 +141,6 @@
                     <p class="text-center">Loading...</p>
                 </div>
                 <div id="cost" class="col-sm-3 d-flex justify-content-center">
-                </div>
-                <div id="content" class="col-lg-1">
-                    <ul id="participantList" class="list-unstyled">
-                        <div class="participantTemplate" class="checkbox" style="display: none">
-                            <label>
-                                <p class="content">Task content goes here...</p>
-                            </label>
-                        </div>
-                    </ul>
-                    <ul id="completedTaskList" class="list-unstyled">
-                    </ul>
                 </div>
             </main>
         </div>

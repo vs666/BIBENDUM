@@ -39,6 +39,11 @@ contract Escrow {
 		
   // }
 
+  function close() public onlyOwner{
+      require(currentState == State.OPEN);
+      currentState = State.CLOSED;
+  }
+
   function pay()public payable returns (address){
       require(currentState == State.OPEN,'Lottery round closed for entry');
       require(msg.value == ticket_price, "Amount is incorrect for buying 1 ticket");
@@ -55,11 +60,18 @@ contract Escrow {
         winner = msg.sender;    // this is horseshit
     }
 
+    function reset() private {
+        require(currentState == State.COMPLETED,'Lottery round not yet closed');
+        // call function to close the lottery
+        ticket_amount = 0;
+    }
+
     function transferFunds() public payable {
         // require(currentState == State.CLOSED,'Lottery round not yet closed');
         winner = msg.sender;
         winner.transfer(address(this).balance);
         currentState = State.COMPLETED;
+        reset();
     }
 
     function callWinner() public{

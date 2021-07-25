@@ -64,8 +64,9 @@ App = {
             return
         }
         App.setLoading(true)
-        $('#account').html(App.account);
-        await App.renderData()
+        const max = (a, b) => { return a > b ? a : b };
+        $('#account').html(App.account.toString().substr(0, ($(window).width() * 2) / 138) + '...');
+        await App.renderData();
         App.setLoading(false)
 
 
@@ -84,6 +85,14 @@ App = {
     },
     renderData: async() => {
         // First load the task from the blockchain
+        web3.eth.getBalance(web3.eth.accounts[0], (err, res) => {
+            if (err) {
+                console.log('ERROR in fetching account details : ', err);
+            } else {
+                $("#balance").html(web3.fromWei(res, "ether") + " ETH");
+            }
+
+        })
         console.log('Entered renderData')
         const current_bid = (await App.escrow_contract.getPrice()).toNumber();
         const tam = (await App.escrow_contract.ticket_amount()).toNumber();
@@ -107,6 +116,15 @@ App = {
             value: web3.toWei(2, 'ether'),
         });
     },
+    transferFund: async() => {
+        await App.escrow_contract.transferFunds({
+            from: web3.eth.accounts[0]
+        });
+        console.log('Funds transferred');
+    },
+    closeLottery: async() => {
+        await App.escrow_contract.close({ from: web3.eth.accounts[0] });
+    }
 
 }
 
@@ -114,10 +132,19 @@ App = {
 $("form").on('submit', async function(event) {
     // ajax call here
     event.preventDefault();
+    alert(event.target.id);
     console.log('Adding bid');
-    App.addBid()
-        // window.location.reload();
+    if (event.target.id == 'add')
+        App.addBid();
+    else if (event.target.id == 'roll') {
+        App.transferFund();
+    }
+    // to check fund transfers
+    // App.transferFund();
+    // window.location.reload();
 });
+
+
 
 function clickedBox() {
     console.log('clicked');
