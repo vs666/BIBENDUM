@@ -66,6 +66,19 @@ App = {
         App.setLoading(true)
         const max = (a, b) => { return a > b ? a : b };
         $('#account').html(App.account.toString().substr(0, ($(window).width() * 2) / 138) + '...');
+        const stat = await App.escrow_contract.getStatus()
+        if (stat == "Open") {
+            $('.status').html('OPEN');
+            $('.statusInfo').html('This round is open for participation currently');
+        }
+        if (stat == "Closed") {
+            $('.status').html('CLOSED');
+            $('.statusInfo').html('This round is Closed for participation. Awaiting Draw.');
+        }
+        if (stat == "Completed") {
+            $('.status').html('COMPLETED');
+            $('.statusInfo').html('This round is Completed. Awaiting Results.');
+        }
         await App.renderData();
         App.setLoading(false)
 
@@ -138,6 +151,8 @@ $("form").on('submit', async function(event) {
         App.addBid();
     else if (event.target.id == 'roll') {
         App.transferFund();
+    } else if (event.target.id == 'close') {
+        App.closeLottery();
     }
     // to check fund transfers
     // App.transferFund();
