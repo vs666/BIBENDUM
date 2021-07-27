@@ -79,11 +79,30 @@ contract Escrow {
         }
     }
 
+    // testing remains
+    function  generateHash(string memory _str) public view returns (uint) {
+        uint random = uint(keccak256(abi.encodePacked(_str)));
+        return (random%ticket_amount) + 1;
+    }
+    
+    // testing remains
     function transferFunds() public payable {
         require(currentState == State.CLOSED,'Lottery round not yet closed');
-        winner = msg.sender;
-        winner.transfer(address(this).balance);
         currentState = State.COMPLETED;
+        string memory s1 = "";
+        for(uint x=1;x<=ticket_amount;x++){
+            s1 = string(abi.encodePacked(s1,participants[x].from));
+        }
+        uint nonce = 0;
+
+        // relatively easy for now
+        while(uint(keccak256(abi.encodePacked(s1,nonce)))> uint((1<<250))){
+            nonce++;
+        }
+        uint winner_hash = generateHash(string(abi.encodePacked(s1,nonce)));
+
+        winner = participants[winner_hash].from;
+        winner.transfer(address(this).balance);
         reset();
     }
 
