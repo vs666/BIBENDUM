@@ -120,6 +120,29 @@ Now, we need to deploy the frontend ( we use [lite-server](https://www.npmjs.com
 npm run dev
 ```
 
+## Application Preview
+
+The application is a simple web interface that allows you to draw lotteries. The following screenshots from the application explain the usage and shows the interface.
+
+1. ![Homepage](./homepage.png)    
+This is the homepage of the application that is meant for the explaining of the interface. The left console displays the `account details`, the right console displays the `current round of lottery` and `actions that can be taken`. Further, the middle panel is for information regarding the accounts of the participants of the current round of lottery.
+
+2. ![Buy Ticket](./buying.png)      
+This image shows the process of buying a ticket using the `meta-mask` extension.
+
+Now, after multiple people have bought stakes, we have the account details as follows :     
+
+3. ![Account Details](./pre-roll.png)]
+
+The screen looks like this : 
+
+4. ![Screen view](./screen-mid.png)
+
+Now, the lottery round is closed by the initiator of the lottery, and roll is done by any one of the members.
+After the draw, the screen goes back to the image similar to (1), and the account details looks as follows: 
+
+5. ![Account Details](./post-rolling.png)
+
 ## Future Work 
 
 In future we aim to release subsequent versions with the following changes : 
