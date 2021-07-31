@@ -10,13 +10,13 @@
 <br />
 <p align="center">
   <a href="https://github.com/vs666/Sentinel">
-    <img src="misc_assets/sentinel-logo.jpg" alt="Logo" width="80" height="80">
+    <img src="./icon.png" alt="Logo" width="80" height="80">
   </a>
 
   <h3 align="center">BIBENDUM</h3>
 
   <p align="center">
-    Trustless lottery system on Ethereum.
+    Trustless Decentralized lottery system on Ethereum.
     <br />
     <br />
     <br />
@@ -49,6 +49,8 @@
     </li>
     <li><a href="#usage">Usage</a></li>
     <li><a href="#roadmap">Roadmap</a></li>
+    <li><a href="#challenges">Challenges</a></li>
+    <li><a href="#preview">Application Preview</a></li>
     <li><a href="#contributing">Contributing</a></li>
     <li><a href="#license">License</a></li>
     <li><a href="#future-work">Future Work</a></li>
@@ -65,6 +67,17 @@
 [![Product Name Screen Shot][product-screenshot]](https://example.com)
 
 BIBENDUM is a trustless decentralized lottery system, that can be used to nominate and draw lotteries. 
+
+The amazing feature of the project is its random lottery draw feature, which is completely trustless and decentralized.
+
+### The problem it solves 
+
+* `Why :` A decentralized lottery system that is trustless, is a necessity. This is because lottery should be a zero sum game, but the fact that the organizers profit from it, shows that it is not the case.         
+In the pre-blockchain age, we had to suffer this tradeoff of fairness, because there was a need of trust in the organizers. But now, a trustless escrow contract can do what the organizers of lottery do, for free. Thus we need to upgrade to a `decentralized trustless lottery system`.
+
+* `How : ` We make use of escrow contracts, a virtual entity that holds all the money on wage for a particular round of the lottery. The first version requires a moderator, however, it is still a zero sum game, because the moderator has no more stake or chance of winning than any other participant.
+
+
 
 ### Built With
 
@@ -120,7 +133,7 @@ Now, we need to deploy the frontend ( we use [lite-server](https://www.npmjs.com
 npm run dev
 ```
 
-## Application Preview
+## Preview
 
 The application is a simple web interface that allows you to draw lotteries. The following screenshots from the application explain the usage and shows the interface.
 
@@ -132,7 +145,7 @@ This image shows the process of buying a ticket using the `meta-mask` extension.
 
 Now, after multiple people have bought stakes, we have the account details as follows :     
 
-3. ![Account Details](./pre-roll.png)]
+3. ![Account Details](./pre-roll.png)
 
 The screen looks like this : 
 
@@ -159,6 +172,15 @@ v2.1 In this version, after true decentralized system, we plan to allow any user
 ## Roadmap
 
 See the [open issues](https://github.com/vs666/BIBENDUM/issues) for a list of proposed features (and known issues).
+
+# Challenges
+
+1. `Kicking off Blockchain Journey :` This was the first time we coded in Solidity, so the biggest challenge was to get a working understanding of the Blockchain (esp. Ethereum). We had to learn how to use the Ethereum client, how to create a contract, how to deploy a contract, how to interact with the blockchain and how to use the web3 js.
+
+2. `Deciding a winner :` The major challenge was that the winner needed to be **out of the state**, which was challenging. So we devised a clever method. If a person wished to meddle with the winner selection method so that he himself becomes the winner, he would have to increase his stake in the lottery. The proper way to attack would be to find a desired hash value (calculated in the contract) that makes the particular person the winner. So, for this he would have to increase his stake. For n people already in the contract, his chance of being winner will be 1/n. So he would have to keep adding stake (on average around n times), so he is the expected winner. This is after the assumption that other people have stopped betting, and the organizer has not closed the round yet.       
+Thus, we notice this attack has been **heavily disincentivised**, and though possible with a low probability, the expected return is very highly negative.
+
+3. `Asynchronous Nature : ` This is currently an open problem and the primary reason we have a host for the lottery. While the host himself will have equal expectation of reward, a rational adversary being a host might cause freezing of stakes, and a few related attacks. We have minimized the problem by designing the protocol such that any potentially destructive action will require a high stake.
 
 
 
